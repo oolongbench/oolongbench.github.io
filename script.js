@@ -905,6 +905,8 @@ fetch('data.json')
         data = json;
         initializeLeaderboard();
         populateModelSelection();
+        populateFacetFilters();
+        attachFacetListeners();
     });
 
 // Initialize the leaderboard with the default view
@@ -915,6 +917,63 @@ function initializeLeaderboard() {
     const results = preprocessData(models, filteredQuestions);
     calculateGlobalRankings(results, models);
     populateLeaderboard(results, models);
+}
+
+// Populate facet chips (year, genre, length)
+function populateFacetFilters() {
+    const years = new Set();
+    const genres = new Set();
+    data.pairs.forEach(p => {
+        if (p.year) years.add(String(p.year));
+        if (p.genre) {
+            const raw = String(p.genre).toLowerCase();
+            genres.add(raw.includes('historical') ? 'historical' : raw);
+        }
+    });
+
+    const yearChips = document.getElementById('year-chips');
+    const genreChips = document.getElementById('genre-chips');
+    const lengthChips = document.getElementById('length-chips');
+
+    const addChip = (container, value, label) => {
+        const span = document.createElement('span');
+        span.className = 'chip';
+        span.dataset.value = value;
+        span.textContent = label;
+        span.addEventListener('click', () => {
+            span.classList.toggle('active');
+            if (!isUpdating) applyFilters();
+        });
+        container.appendChild(span);
+    };
+
+    Array.from(years).sort().forEach(y => addChip(yearChips, y, y));
+    Array.from(genres).sort().forEach(g => addChip(genreChips, g, g));
+
+    // Length buckets present in data
+    const known = new Set();
+    data.pairs.forEach(p => {
+        const v = String(p.length || '').trim();
+        if (!v) return;
+        if (/^below 75k$/i.test(v)) known.add('below 75k');
+        else if (/^75k\s+127k$/i.test(v)) known.add('75k 127k');
+        else if (/^127k_180k$/i.test(v)) known.add('127k_180k');
+        else if (/^above 180k$/i.test(v)) known.add('above 180k');
+    });
+    const order = ['below 75k','75k 127k','127k_180k','above 180k'];
+    order.filter(b => known.has(b)).forEach(b => addChip(lengthChips, b, b.replace('_','-').replace(' 127k','-127k')));
+}
+
+function attachFacetListeners() { /* chips handle their own click events */ }
+
+// Clear only facets (year/genre/length)
+function clearFacets() {
+    if (!isUpdating) {
+        isUpdating = true;
+        document.querySelectorAll('.chip.active').forEach(chip => chip.classList.remove('active'));
+        isUpdating = false;
+        applyFilters();
+    }
 }
 
 // Preprocess the data to calculate correct and attempted counts
@@ -1025,6 +1084,41 @@ function populateLeaderboard(results, models, sortKey = 'accuracy', sortDirectio
     });
 
     updateSortingArrows(sortKey, sortDirection);
+
+    // Summary + active chips
+    const summaryEl = document.getElementById('results-summary');
+    const activeEl = document.getElementById('active-filters');
+    if (summaryEl) {
+        const totalQs = filteredQuestions.length;
+        const labelParts = [];
+        const y = Array.from(document.querySelectorAll('#year-chips .chip.active')).map(c => c.dataset.value);
+        const g = Array.from(document.querySelectorAll('#genre-chips .chip.active')).map(c => c.dataset.value);
+        const lengthSel = Array.from(document.querySelectorAll('#length-chips .chip.active')).map(c => c.dataset.value.replace('_','-').replace(' 127k','-127k'));
+        if (y.length) labelParts.push(`Year ${y.join(', ')}`);
+        if (g.length) labelParts.push(`Genre ${g.join(', ')}`);
+        if (lengthSel.length) labelParts.push(`Length ${lengthSel.join(', ')}`);
+        summaryEl.textContent = `${totalQs} book/claim pairs${labelParts.length ? ' • ' + labelParts.join(' • ') : ''}`;
+    }
+    if (activeEl) {
+        activeEl.innerHTML = '';
+        const pushChip = (text) => {
+            const span = document.createElement('span');
+            span.className = 'active-filter-chip';
+            span.textContent = text;
+            activeEl.appendChild(span);
+        };
+        if (document.getElementById('all-models-checkbox').checked) pushChip('Common set: all');
+        if (document.getElementById('closed-source-checkbox').checked) pushChip('Common set: closed');
+        if (document.getElementById('open-source-checkbox').checked) pushChip('Common set: open');
+        if (document.getElementById('hard-set-checkbox').checked) pushChip('Hard split');
+        if (document.getElementById('easy-set-checkbox').checked) pushChip('Easy split');
+        const y = Array.from(document.querySelectorAll('#year-chips .chip.active')).map(c => c.dataset.value);
+        const g = Array.from(document.querySelectorAll('#genre-chips .chip.active')).map(c => c.dataset.value);
+        const lengthSel = Array.from(document.querySelectorAll('#length-chips .chip.active')).map(c => c.dataset.value.replace('_','-').replace(' 127k','-127k'));
+        if (y.length) pushChip(`Year: ${y.join(', ')}`);
+        if (g.length) pushChip(`Genre: ${g.join(', ')}`);
+        if (lengthSel.length) pushChip(`Length: ${lengthSel.join(', ')}`);
+    }
 }
 
 // Function to toggle metadata row visibility and the triangle icon direction
@@ -1087,6 +1181,28 @@ function applyFilters() {
 
     // Start with all questions
     let questions = data.pairs.slice(); // Copy of all questions
+
+    // Facet: Year (multi)
+    const selectedYears = Array.from(document.querySelectorAll('#year-chips .chip.active')).map(c => c.dataset.value);
+    if (selectedYears.length) {
+        questions = questions.filter(q => selectedYears.includes(String(q.year)));
+    }
+
+    // Facet: Genre (multi)
+    const selectedGenres = Array.from(document.querySelectorAll('#genre-chips .chip.active')).map(c => c.dataset.value);
+    if (selectedGenres.length) {
+        questions = questions.filter(q => {
+            const g = String(q.genre || '').toLowerCase();
+            const norm = g.includes('historical') ? 'historical' : g;
+            return selectedGenres.includes(norm);
+        });
+    }
+
+    // Facet: Length buckets (multi)
+    const selectedBuckets = Array.from(document.querySelectorAll('#length-chips .chip.active')).map(c => c.dataset.value);
+    if (selectedBuckets.length) {
+        questions = questions.filter(q => q.length && selectedBuckets.includes(String(q.length)));
+    }
 
     // Apply difficulty filter
     const hardChecked = document.getElementById('hard-set-checkbox').checked;
@@ -1513,6 +1629,8 @@ function clearFilters() {
         isUpdating = true; // Set guard to prevent loop
         $('#model-selection').val(null).trigger('change'); // Clear selection in dropdown
         clearCheckboxFilters(); // Clear all checkboxes
+        // Clear chip-based facets
+        document.querySelectorAll('.chip.active').forEach(chip => chip.classList.remove('active'));
         filteredModels = Object.keys(data.pairs[0].results).filter(model => model !== 'bm25-gpt4o-top25');
         filteredQuestions = data.pairs.slice(); // Reset to all questions
         applyFilters();
