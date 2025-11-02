@@ -1,7 +1,7 @@
 /* Base styles */
 body {
     font-family: 'Georgia', serif;
-    background-color: #f4f4f9;
+    background-color: #fdf8e1;
     color: #333;
     margin: 0;
     padding: 0;
@@ -19,7 +19,7 @@ body {
 
 h1 {
     text-align: left;
-    color: #4e0e78;
+    color: #8b6914;
     font-family: 'Cinzel Decorative';
     font-size: 1.6em;
     margin-bottom: 6px;
@@ -28,7 +28,7 @@ h1 {
 h2 {
     text-align: left;
     font-family: 'Alegreya', cursive;
-    color: #6a1b9a;
+    color: #b8860b;
     font-size: 2em; /* Smaller than h1 */
 }
 
@@ -41,24 +41,24 @@ h2 {
 .nocha-2 {
     font-family: 'Cinzel Decorative', cursive;
     font-size: 1.2em;
-    color: #6a1b9a;
+    color: #b8860b;
 }
 
 #leaderboard a {
     text-decoration: none;
     font-weight: bold;
-    color: #6a1b9a; 
+    color: #b8860b; 
 }
 
 .results-summary {
     margin: 10px 0 14px 0;
-    color: #4e0e78;
+    color: #8b6914;
     font-weight: 600;
 }
 
 #leaderboard a:hover {
     text-decoration: none; 
-    color: #ca77fd; 
+    color: #cd853f; 
 }
 
 
@@ -70,40 +70,40 @@ h2 {
 }
 
 .intro a {
-    color: #6a1b9a;
+    color: #b8860b;
     text-decoration: none;
 }
 
 .intro a:hover {
     text-decoration: underline;
-    color: #b34beb;
+    color: #cd853f;
 }
 
 /* Hero/top text */
 .hero { 
-    background: #fdfcfe; 
-    border: 1px solid #e8dff0; 
+    background: #fefcf5; 
+    border: 1px solid #e8e0d0; 
     border-radius: 12px; 
     padding: 20px 24px; 
     margin-bottom: 20px; 
-    color: #4a3c5a;
+    color: #5a4a3c;
     line-height: 1.65;
     font-size: 16px;
 }
-.hero .lead { font-size: 1.05em; color: #4a3b66; margin-bottom: 10px; }
-.hero b { color: #4e0e78; }
+.hero .lead { font-size: 1.05em; color: #66543b; margin-bottom: 10px; }
+.hero b { color: #8b6914; }
 .hero p { margin: 0 0 12px 0; }
 .hero p:last-child { margin-bottom: 0; }
 .hero a {
-    color: #6b4c7a;
+    color: #7a6b4c;
     text-decoration: none;
-    border-bottom: 1px dotted #a08bb0;
+    border-bottom: 1px dotted #b0a08b;
     transition: all 0.2s ease;
 }
 .hero a:hover {
-    color: #5a147f;
-    border-bottom-color: #5a147f;
-    background-color: #f5f0f8;
+    color: #8b6914;
+    border-bottom-color: #8b6914;
+    background-color: #f8f5f0;
     padding: 2px 4px;
     border-radius: 3px;
     margin: -2px -4px;
@@ -133,7 +133,7 @@ table th, table td {
 }
 
 table th {
-    background-color: #6a1b9a;
+    background-color: #b8860b;
     color: white;
     padding: 12px 15px; /* Increase padding for better spacing */
     text-align: left; /* Align header text to the left */
@@ -149,10 +149,10 @@ table tr:hover {
 
 .filter-container {
     text-align: left;
-    border: 1px solid #6a1b9a;
+    border: 1px solid #b8860b;
     border-radius: 8px;
     padding: 14px;
-    background-color: #faf7ff;
+    background-color: #fffaf7;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 12px;
     font-size: 1em; /* Match filter container text size to the body text size */
@@ -172,23 +172,23 @@ table tr:hover {
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
-    border: 1px solid #c9b6e3;
+    border: 1px solid #e3c9b6;
     background: #fff;
-    color: #5a147f;
+    color: #8b6914;
     padding: 6px 10px;
     border-radius: 999px;
     cursor: pointer;
     user-select: none;
     font-size: 0.95em;
 }
-.chip.active { background: #5a147f; color: #fff; border-color: #5a147f; }
+.chip.active { background: #8b6914; color: #fff; border-color: #8b6914; }
 
-.filter-help { font-size: 0.95em; color: #584e59; background:#f1e9f8; border:1px solid #e0d0f0; border-radius:8px; padding:8px 10px; margin-bottom:10px; }
+.filter-help { font-size: 0.95em; color: #59584e; background:#f8f1e9; border:1px solid #f0e0d0; border-radius:8px; padding:8px 10px; margin-bottom:10px; }
 
 .facet-label {
     display: block;
     font-weight: 600;
-    color: #5a147f;
+    color: #8b6914;
     margin-bottom: 6px;
 }
 
@@ -207,7 +207,7 @@ table tr:hover {
     gap: 8px;
 }
 
-.length-sep { color: #6a1b9a; font-weight: 600; }
+.length-sep { color: #b8860b; font-weight: 600; }
 
 .sidebar-actions { margin-top: 12px; }
 
@@ -231,7 +231,7 @@ table tr:hover {
     font-size: 1em; /* match filter label text size to the body text size */
 }
 
-.filter-label.pill { border: 1px solid #c9b6e3; padding: 6px 10px; border-radius: 10px; background: #fff; gap: 6px; }
+.filter-label.pill { border: 1px solid #e3c9b6; padding: 6px 10px; border-radius: 10px; background: #fff; gap: 6px; }
 
 .active-filters {
     margin-top: 10px;
@@ -241,9 +241,9 @@ table tr:hover {
 }
 
 .active-filter-chip {
-    background: #efe7f7;
-    color: #4e0e78;
-    border: 1px solid #d9c9ef;
+    background: #f7f0e7;
+    color: #8b6914;
+    border: 1px solid #efd9c9;
     border-radius: 999px;
     padding: 4px 10px;
     font-size: 0.9em;
@@ -310,13 +310,13 @@ table tr:hover {
 
 .prompt h2 {
     margin-bottom: 10px;
-    color: #6a1b9a;
+    color: #b8860b;
     font-size: 2em;
     cursor: pointer;
 }
 
 .prompt h2:hover, .team-header:hover {
-    color: #b34beb;
+    color: #cd853f;
 }
 
 .prompt h2, .team-header {
@@ -355,7 +355,7 @@ table tr:hover {
     width: 150px;
     height: 150px;
     transition: transform 0.3s;
-    box-shadow: 0 0 10px rgba(72, 2, 112, 0.5);
+    box-shadow: 0 0 10px rgba(139, 105, 20, 0.5);
 }
 
 .team-img:hover {
@@ -363,7 +363,7 @@ table tr:hover {
 }
 
 .team p {
-    color: #6a1b9a;
+    color: #b8860b;
     font-weight: bold;
 }
 
@@ -380,7 +380,7 @@ table tr:hover {
 
 .caution-flag a {
     text-decoration: none; /* Remove underline from links */
-    color:  #6a1b9a; 
+    color:  #b8860b; 
 }
 
 .caution-flag a:hover {
@@ -400,13 +400,13 @@ table tr:hover {
 
 .example-header {
     margin-bottom: 10px;
-    color: #6a1b9a;
+    color: #b8860b;
     font-size: 2em;
     cursor: pointer;
 }
 
 .example-header:hover {
-    color: #b34beb;
+    color: #cd853f;
 }
 
 .example-content {
@@ -424,7 +424,7 @@ table tr:hover {
 }
 
 .example-content a {
-    color: #6a1b9a;
+    color: #b8860b;
     text-decoration: none;
 }
 
@@ -445,7 +445,7 @@ table tr:hover {
     cursor: pointer;
     margin-right: 12px; /* Add more space between icon and text */
     font-size: 0.9em;
-    color: #6a1b9a;
+    color: #b8860b;
     display: inline-block;
     vertical-align: middle;
     transition: transform 0.3s ease;
@@ -458,7 +458,7 @@ table tr:hover {
 
 /* Slight color change on hover to make it more interactive */
 .toggle-icon:hover {
-    color: #b34beb;
+    color: #cd853f;
 }
 
 /* Style for the metadata row */
