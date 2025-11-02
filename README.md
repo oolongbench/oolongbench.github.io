@@ -1,2 +1,2 @@
-# novelchallenge.github.io
-A novel challenge for long-context LLMs
+# oolong.github.io
+Website template based on the [NoCha](novelchallenge.github.io) website
