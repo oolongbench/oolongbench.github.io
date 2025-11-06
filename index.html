@@ -10,7 +10,7 @@
 
     gtag('config', 'G-F5MVDYGXEV');
     </script>
-    <title>NoCha leaderboard</title>
+    <title>Oolong leaderboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="fontawesome/css/all.css"> <!-- Local FontAwesome CSS -->
@@ -24,160 +24,30 @@
 <body>
     <div class="container">
         <h1>
-            <img src="genie_lamp.png" alt="Genie Lamp" style="vertical-align: middle; margin-right: 2px; width: 50px; height: auto; position: relative; top: -10px">
-            A <span class="nocha">No</span>vel <span class="nocha">Cha</span>llenge for long-context language models
+            <img src="mug.png" alt="Mug icon" style="vertical-align: middle; margin-right: 2px; width: 50px; height: auto; position: relative; top: -10px">
+            Oolong: Evaluating Long Context Reasoning and Aggregation Capabilities
         </h1>
         <hr><br>
         <section class="hero">
-            <p class="lead"><span class="nocha">NoCha</span> measures how well <b>long-context language models</b> can verify claims written about fiction books. See our <a href="http://arxiv.org/abs/2406.16264"><i class="fas fa-file-alt"></i> paper</a> and <a href="https://github.com/marzenakrp/nocha/"><i class="fab fa-github"></i> GitHub repo</a> for details.</p>
-            <p><b>About the benchmark:</b> <span class="nocha">NoCha</span> contains 1001 <i>narrative minimal pairs</i> from recently-published novels, where one claim is true and the other is false. Given the book text and a claim, a model is instructed to verify whether the claim is true or false. A model only gets credit for a pair if it correctly labels both the true and false claim.</p>
-            <p><b>Data update:</b> In November 2024, NoCha claims were expanded with 164 new claim pairs from 13 additional books. Models that performed above random on the original dataset were also tested on these new claims. If multiple models from the same family qualified, only the latest version was tested. Look for the <span style="color:#ba53ff;">&#x2605;</span> next to a model's name in the leaderboard to see which ones were tested on the new claims.</p>
+            <p class="lead">Oolong is a challenging long-context reasoning benchmark. Questions require multi-step reasoning to identify relevant sections of input, label or categorize these sections, and then accumulate information to make distributional-level decisions. See our <a href="https://arxiv.org/abs/2511.02817"><i class="fas fa-file-alt"></i> paper</a> and <a href="https://github.com/abertsch72/oolong"><i class="fab fa-github"></i> GitHub repo</a> for details.</p>
+
+            <p><b>Leaderboard coming soon, stay tuned!</b></p>
         </section>
         
 
-        <div class="layout">
-          <aside class="sidebar">
-            <div class="filter-container">
-            <div class="filter-help">The default leaderboard view ranks models by their accuracy on pairs that they attempted. Each model can only attempt pairs if the book 
-            (1) fits within the model's context window and (2) does not trigger content guardrails. 
-            The controls below allow you to fairly compare selected models on the <i>common set</i> of pairs that all selected models attempted. 
-            Use the <i>easy split</i> and <i>hard split</i> filters to view model performance on claims where evidence is (1) easier or (2) more difficult to retrieve.</div>
 
-            <!-- Primary filters first; secondary facets moved below -->
-
-            <div class="checkbox-container">
-                    <label class="filter-label pill">
-                        <input type="checkbox" id="all-models-checkbox"> <i class="fas fa-globe"></i> Common set (all)
-                    </label>
-                    <label class="filter-label pill">
-                        <input type="checkbox" id="closed-source-checkbox"> <i class="fas fa-lock"></i> Common set (closed LLMs)
-                    </label>
-                    <label class="filter-label pill">
-                        <input type="checkbox" id="open-source-checkbox"> <i class="fas fa-lock-open"></i> Common set (open-weight)
-                    </label>
-                  <!-- Hard/Easy Problem Checkboxes -->
-                    <label class="filter-label pill"><input type="checkbox" id="hard-set-checkbox"><i class="fas fa-dumbbell"></i> Hard split</label>
-                    <label class="filter-label pill"><input type="checkbox" id="easy-set-checkbox"> <i class="fas fa-feather-alt"></i> Easy split</label>
-
-            </div>
-            <div class="facet-controls">
-                <div class="facet">
-                    <label class="facet-label"><i class="fas fa-calendar-alt"></i> Year</label>
-                    <div id="year-chips" class="chip-group" role="group" aria-label="Year"></div>
-                </div>
-                <div class="facet">
-                    <label class="facet-label"><i class="fas fa-theater-masks"></i> Genre</label>
-                    <div id="genre-chips" class="chip-group" role="group" aria-label="Genre"></div>
-                </div>
-                <div class="facet">
-                    <label class="facet-label"><i class="fas fa-arrows-alt-h"></i> Length</label>
-                    <div id="length-chips" class="chip-group" role="group" aria-label="Length"></div>
-                </div>
-            </div>
-
-            <div class="filter-controls">
-                <select id="model-selection" class="model-selection" multiple="multiple">
-                    <!-- Options will be populated by JavaScript -->
-                </select>
-            </div>
-
-            <div id="active-filters" class="active-filters" aria-live="polite"></div>
-            <div class="sidebar-actions">
-                <button onclick="clearFilters()" class="clear-button" style="width:100%"><i class="fas fa-undo"></i> clear all filters</button>
-            </div>
-            </div>
-          </aside>
-          <main class="content">
-            <table id="leaderboard">
-            <thead id="table-headers">
-                <tr>
-                    <th>Rank</th>
-                    <th class="sortable" onclick="sortTable('model')">Model <span class="sort-arrow" id="model-arrow"></span></th>
-                    <th class="sortable" onclick="sortTable('accuracy')">Accuracy <span class="sort-arrow" id="accuracy-arrow"></span></th>
-                    <th class="sortable" onclick="sortTable('correct')"> # Correct pairs<span class="sort-arrow" id="correct-arrow"></span></th>
-                    <th class="sortable" onclick="sortTable('attempted')"># Attempted pairs<span class="sort-arrow" id="attempted-arrow"></span></th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be populated by JavaScript -->
-            </tbody>
-            </table>
-          </main>
-        </div>
-        
-        
-        
-        <div class="caution-flag">
-            <i class="fas fa-exclamation-triangle"></i>
-            The <span class="nocha">NoCha</span> dataset will <u>not</u> be publicly released to prevent data contamination. We include a small data sample from public domain books in our <a href="https://github.com/marzenakrp/nocha/"><i class="fab fa-github"></i>GitHub repo</a>. Our team commits to updating the leaderboard with new models and updating the dataset with new books. Please <a href="mailto:nochachallenge@gmail.com"><i class="fas fa-envelope"></i>contact us</a> if you want your model to appear on the leaderboard (API credits are certainly welcome!)
-        </div>               
-        <br>
-    
-
-        <div class="example">
-            <h2 class="example-header" onclick="toggleExample('example-text')"><i class="fas fa-book"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example pair</h2>
-            <div id="example-text" class="example-content">
-                <p><b>Book:</b> <a href="https://www.goodreads.com/book/show/150247395-the-tainted-cup">"Tainted Cup"</a> by Robert Jackson</p>
-                <p><b>True claim:</b> Despite her skills as an Apoth, Nusis is unable to reverse engineer the type of portal opened by the reagents key found in Rona's wooden chest.</p>
-                <p><b>False claim:</b> By using her skills as an Apoth, Nusis is able to reverse engineer the type of portal opened by the reagents key found in Rona's wooden chest.</p>
-                <p><b>Human-written explanation from <span class="nocha">NoCha</span>:</b> The reagents key is in fact not a key at all but the cure for dappleglass poisoning, which explains why Nusis is unable to figure out what type of portal it opens.</p>
-            </div>
-        </div>
-        
-
-        <div class="prompt">
-            <h2 class="prompt-header" onclick="togglePrompt('prompt-text')"><i class="fas fa-cogs"></i>&nbsp;&nbsp;&nbsp;&nbsp;Main prompt (explain+answer)</h2>
-            <pre id="prompt-text" class="robotic-text">
-You are provided with a context and a statement. Your task is to carefully read the context and then determine whether the statement is true or false.
-
-Answer TRUE if the statement is true in its entirety based on the context provided.
-Answer FALSE if any part of the statement is false based on the context provided.
-
-<center>&lt;context&gt; {book text} &lt;/context&gt;</center>
-
-<center>&lt;statement&gt; {claim} &lt;/statement&gt;</center>
-
-&lt;question&gt; Based on the context provided, is the above statement TRUE or FALSE? &lt;/question&gt;
-
-First provide an explanation of your decision-making process in at most one paragraph, and then provide your final answer. Use the following format:
-
-<center>&lt;explanation&gt; YOUR EXPLANATION &lt;/explanation&gt;</center>
-<center>&lt;answer&gt; YOUR ANSWER &lt;/answer&gt;</center>
-            </pre>
-        </div>
-
-        <div class="prompt">
-            <h2 class="prompt-header" onclick="togglePrompt('prompt-simple-text')"><i class="fas fa-cogs"></i>&nbsp;&nbsp;&nbsp;&nbsp;Simple prompt (answer only)</h2> 
-            <pre id="prompt-simple-text" class="robotic-text">
-You are provided with a context and a statement. Your task is to carefully read the context and then determine whether the statement is true or false.
-
-Answer TRUE if the statement is true in its entirety based on the context provided.
-Answer FALSE if any part of the statement is false based on the context provided.
-
-<center>&lt;context&gt; {book text} &lt;/context&gt;</center>
-
-<center>&lt;statement&gt; {claim} &lt;/statement&gt;</center>
-
-&lt;question&gt; Based on the context provided, is the above statement TRUE or FALSE? &lt;/question&gt;
-            </pre>
-        </div>
 
         <div class="team">
             <h2 class="team-header" onclick="toggleTeam('team-section')"><i class="fas fa-users"></i>&nbsp;&nbsp;&nbsp;&nbsp;Team</h2>
             <div id="team-section" class="team-section">
-                <!-- Team member information removed -->
+                Oolong was a joint effort by Amanda Bertsch, Adithya Pratapa, Teruko Mitamura, Graham Neubig, and Matthew R. Gormley at Carnegie Mellon University.
             </div>
         </div>
 
-        <!-- <footer>
-            <div class="footer-content">
-                <p>Last updated: July 31, 2024 <span id="last-updated"></span></p>
-            </div>
-        </footer> -->
         <footer>
             <div class="footer-content" style="background-color: #faf8fa; padding: 10px 0; text-align: center; border-top: 0px solid #dee2e6;">
                 <p style="margin: 0; padding: 0; color: #7c6c7d; font-size: 18px;">
-                    Last updated: <span style="font-weight: bold; color: #343a40;">July 18, 2025</span>
+                    Webpage style/template from the excellent <a href="https://novelchallenge.github.io/">NoCha benchmark</a>! Last updated: <span style="font-weight: bold; color: #343a40;">November 6, 2025</span>
                 </p>
             </div>
         </footer>
@@ -190,23 +60,6 @@ Answer FALSE if any part of the statement is false based on the context provided
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="script.js"></script>
     <script>
-         function toggleExample(id) {
-            const element = document.getElementById(id);
-            if (element.style.display === "none" || element.style.display === "") {
-                element.style.display = "block";
-            } else {
-                element.style.display = "none";
-            }
-        }
-
-        function togglePrompt(id) {
-            var promptText = document.getElementById(id);
-            if (promptText.style.display === "none") {
-                promptText.style.display = "block";
-            } else {
-                promptText.style.display = "none";
-            }
-        }
 
         function toggleTeam(id) {
             var teamSection = document.getElementById(id);
@@ -216,16 +69,6 @@ Answer FALSE if any part of the statement is false based on the context provided
                 teamSection.style.display = "none";
             }
         }
-
-        // function toggleClosedSource() {
-        //     const checkbox = document.getElementById('closed-source-checkbox');
-        //     const closedSourceModels = ["GPT-4o", "GPT-4-Turbo", "Claude-3-Opus", "Claude-3.5-Sonnet", "Gemini Pro 1.5", "Gemini Flash 1.5"];
-        //     if (checkbox.checked) {
-        //         $('#model-selection').val(closedSourceModels).trigger('change');
-        //     } else {
-        //         $('#model-selection').val(null).trigger('change');
-        //     }
-        // }
 
         // Initially hide the prompt texts and team section
         document.getElementById('prompt-text').style.display = 'none';
