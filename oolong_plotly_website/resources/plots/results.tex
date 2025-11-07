@@ -1,0 +1,217 @@
+\begin{figure}
+\begin{tikzpicture}
+\pgfplotstableread[col sep=comma]{resources/plots/real_results.csv}\realdata
+\pgfplotstabletranspose[colnames from=model]\realtable{\realdata}
+\pgfplotstableread[col sep=comma]{resources/plots/synth_results.csv}\synthdata
+\pgfplotstabletranspose[colnames from=model, columns={model,8192,16384,32768,65536,131072,262144,524288}]\synthtable{\synthdata}
+
+\begin{groupplot}[
+    group style={
+        group size=2 by 1,
+        horizontal sep=0.5cm,
+    },
+    legend style={
+        at={(0.85,1.2)},
+        anchor=south,
+        legend columns=5,
+        font=\scriptsize,
+    },
+    height=6cm,
+]
+
+\nextgroupplot[
+    title={\ours-synth},
+    xlabel={Context Length},
+    ylabel={Score},
+    grid=major,
+    xmode=log,
+    log basis x=2,
+    xmin=6500, xmax=550000,
+    ymin=0, ymax=1,
+    xtick={8192,16384,32768,65536,131072,262144,524288},
+    xticklabels={8K,16K,32K,64K,128K,256K,512K},
+    width=8.5cm,
+]
+\addplot[
+    color=cbYellow,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={gemini-2.5-pro}] {\synthtable};
+\addlegendentry{gemini-2.5-pro}
+
+
+
+% --- main line ---
+\addplot[color=cbBlue, mark=o, mark size=2pt, line width=1pt]
+  table[
+    y={gpt-5-nano},
+  ] {\synthtable};
+\addlegendentry{gpt-5-nano}
+
+\addplot[
+    color=cbBlue,
+    mark=x,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={gpt-5-mini}] {\synthtable};
+\addlegendentry{gpt-5-mini}
+
+\addplot[
+    color=cbBlue,
+    mark=+,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={gpt-5}] {\synthtable};
+\addlegendentry{gpt-5}
+
+% gpt o models
+\addplot[
+    color=cbOrange,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={o4-mini}] {\synthtable};
+\addlegendentry{o4-mini}
+
+\addplot[
+    color=cbOrange,
+    mark=x,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={o3}] {\synthtable};
+\addlegendentry{o3}
+
+% claude 4
+\addplot[
+    color=cbGreen,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={claude-sonnet-4-20250514}] {\synthtable};
+\addlegendentry{claude-sonnet-4}
+
+% llama 4
+\addplot[
+    color=cbPurple,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={Llama-4-Maverick-17B-128E-Instruct-FP8}] {\synthtable};
+\addlegendentry{llama-4-maverick}
+
+% deepseek
+\addplot[
+    color=cbRed,
+     mark=o,
+     mark size=2pt,
+     line width=1pt
+] table[x=colnames, y={deepseek-r1-0528}] {\synthtable};
+\addlegendentry{deepseek-r1-0528}
+
+% random baseline
+\addplot[
+    color=black,
+    mark=.,
+    dashed,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={random-baseline}] {\synthtable};
+ \addlegendentry{random baseline}
+
+
+\nextgroupplot[
+    title={\ours-real},
+    legend entries={},
+    xlabel={Context Length},
+    xmode=log,
+    log basis x=2,
+    xmin=48000, xmax=600000,
+    ymin=0, ymax=1,
+    xtick={32768,65536,131072,262144,524288},
+    xticklabels={32K,64K,128K,256K,512K},
+    yticklabel pos=right,
+    grid=major,
+    width=6cm,
+    ]
+
+\addplot[
+    color=cbYellow,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={gemini-2.5-pro}] {\realtable};
+
+\addplot[
+    color=cbBlue,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={gpt-5-nano}] {\realtable};
+% \addlegendentry{gpt-5-nano}
+
+\addplot[
+    color=cbBlue,
+    mark=x,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={gpt-5-mini}] {\realtable};
+% \addlegendentry{gpt-5-mini}
+
+\addplot[
+    color=cbBlue,
+    mark=+,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={gpt-5}] {\realtable};
+% \addlegendentry{gpt-5}
+
+% gpt o models
+\addplot[
+    color=cbOrange,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={o4-mini}] {\realtable};
+% \addlegendentry{o4-mini}
+
+\addplot[
+    color=cbOrange,
+    mark=x,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={o3}] {\realtable};
+% \addlegendentry{o3}
+
+% claude 4
+\addplot[
+    color=cbGreen,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={claude-sonnet-4-20250514}] {\realtable};
+% \addlegendentry{claude-sonnet-4}
+
+% deepseek
+\addplot[
+    color=cbRed,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={deepseek-r1-0528}] {\realtable};
+% \addlegendentry{deepseek-r1-0528}
+
+\addplot[
+    color=cbPurple,
+    mark=o,
+    mark size=2pt,
+    line width=1pt
+] table[x=colnames, y={Llama-4-Maverick-17B-128E-Instruct-FP8}] {\realtable};
+% \addlegendentry{llama-4-maverick}
+
+\end{groupplot}
+
+\end{tikzpicture}
+±\caption{Scores by context window length for \ours-synth and \ours-real.}
+\label{fig:results_by_length}
+\end{figure}
