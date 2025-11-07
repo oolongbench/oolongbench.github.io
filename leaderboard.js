@@ -3,6 +3,122 @@
  * Reproduces the exact plots from the paper using Plotly
  */
 
+// Create leaderboard table
+function createLeaderboardTable() {
+    const synthData = [
+        ['gemini-2.5-pro', 0.8854, 0.8447, 0.8774, 0.8813, 0.6984, 0.5683, 0.3656, 0.2506, 0.1329, null, null],
+        ['gpt-5-nano', 0.8683, 0.8137, 0.7733, 0.7096, 0.5453, 0.4781, 0.4102, 0.3931, 0.3648, null, null],
+        ['gpt-5-mini', 0.8701, 0.8457, 0.8457, 0.8513, 0.7765, 0.6464, 0.5014, 0.4085, 0.4005, null, null],
+        ['gpt-5', 0.8654, 0.8429, 0.8550, 0.8556, 0.8445, 0.7612, 0.6124, 0.4636, 0.4003, null, null],
+        ['o4-mini', 0.8186, 0.8064, 0.8197, 0.8307, 0.6510, 0.5186, 0.4415, 0.3953, null, null, null],
+        ['o3', 0.8629, 0.8468, 0.8655, 0.8680, 0.7952, 0.6323, 0.4486, 0.3745, null, null, null],
+        ['claude-sonnet-4', null, null, null, null, null, null, null, null, null, null, null],
+        ['llama-4-maverick', null, null, null, null, null, null, null, null, null, null, null],
+        ['deepseek-r1-0528', null, null, null, null, null, null, null, null, null, null, null],
+        ['random-baseline', 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+    ];
+
+    const realData = [
+        ['gemini-2.5-pro', 0.6012, 0.5081, 0.4793, 0.4129, 0.3790, 0.3428, 0.3411, 0.2958, 0.2984, null],
+        ['gpt-5', 0.5874, 0.4572, 0.3653, 0.2795, 0.2129, 0.1973, null, null, null, null],
+        ['gpt-5-mini', 0.4986, 0.2990, 0.2389, 0.2135, 0.1775, 0.1536, null, null, null, null],
+        ['gpt-5-nano', 0.4309, 0.2682, 0.2323, 0.2037, 0.1651, 0.1687, null, null, null, null],
+        ['o3', 0.5057, 0.3357, 0.2599, 0.2289, null, null, null, null, null, null],
+        ['o4-mini', 0.4169, 0.2177, 0.1793, 0.1462, null, null, null, null, null, null],
+        ['claude-sonnet-4', 0.5058, 0.3298, 0.2670, 0.2700, 0.2423, 0.2211, 0.2377, 0.2058, 0.1897, 0.1455],
+        ['llama-4-maverick', null, null, null, null, null, null, null, null, null, null],
+        ['deepseek-r1-0528', 0.4785, 0.2735, 0.2081, null, null, null, null, null, null, null],
+        ['random-baseline', 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+    ];
+
+    // Calculate average scores for ranking
+    const modelScores = {};
+    
+    synthData.forEach(row => {
+        const model = row[0];
+        const scores = row.slice(1).filter(score => score !== null);
+        if (scores.length > 0) {
+            const avgSynth = scores.reduce((a, b) => a + b, 0) / scores.length;
+            modelScores[model] = { synth: avgSynth, real: 0, count: 1 };
+        }
+    });
+
+    realData.forEach(row => {
+        const model = row[0];
+        const scores = row.slice(1).filter(score => score !== null);
+        if (scores.length > 0) {
+            const avgReal = scores.reduce((a, b) => a + b, 0) / scores.length;
+            if (modelScores[model]) {
+                modelScores[model].real = avgReal;
+                modelScores[model].count = 2;
+            } else {
+                modelScores[model] = { synth: 0, real: avgReal, count: 1 };
+            }
+        }
+    });
+
+    // Calculate overall average and sort
+    const sortedModels = Object.entries(modelScores)
+        .map(([model, scores]) => ({
+            model,
+            synthAvg: scores.synth,
+            realAvg: scores.real,
+            overallAvg: (scores.synth + scores.real) / (scores.count === 2 ? 2 : 1)
+        }))
+        .filter(item => item.model !== 'random-baseline')
+        .sort((a, b) => b.overallAvg - a.overallAvg);
+
+    // Create HTML table
+    let tableHTML = `
+        <div class="leaderboard-table-wrapper">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th class="rank-col">Rank</th>
+                        <th class="model-col">Model</th>
+                        <th class="score-col">OOLONG-synth Avg</th>
+                        <th class="score-col">OOLONG-real Avg</th>
+                        <th class="score-col">Overall Avg</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    sortedModels.forEach((item, index) => {
+        const rank = index + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        
+        tableHTML += `
+            <tr class="model-row ${rankClass}">
+                <td class="rank-cell">
+                    ${rank <= 3 ? `<i class="fas fa-medal rank-icon"></i>` : ''}
+                    ${rank}
+                </td>
+                <td class="model-cell">${item.model}</td>
+                <td class="score-cell">${item.synthAvg > 0 ? item.synthAvg.toFixed(3) : '—'}</td>
+                <td class="score-cell">${item.realAvg > 0 ? item.realAvg.toFixed(3) : '—'}</td>
+                <td class="score-cell overall-score">${item.overallAvg.toFixed(3)}</td>
+            </tr>
+        `;
+    });
+
+    // Add random baseline at the bottom
+    tableHTML += `
+            <tr class="model-row baseline-row">
+                <td class="rank-cell">—</td>
+                <td class="model-cell">random-baseline</td>
+                <td class="score-cell">0.250</td>
+                <td class="score-cell">0.250</td>
+                <td class="score-cell overall-score">0.250</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    `;
+
+    document.getElementById('leaderboard-table-container').innerHTML = tableHTML;
+}
+
 // Color scheme from pre.tex - EXACT RGB values
 const colors = {
     'gemini-2.5-pro': 'rgb(240,228,66)',      // cbYellow
@@ -300,5 +416,6 @@ function createOolongPlots(synthData, realData) {
 
 
 
-// Make function available globally
+// Make functions available globally
 window.initializeLeaderboard = initializeLeaderboard;
+window.createLeaderboardTable = createLeaderboardTable;

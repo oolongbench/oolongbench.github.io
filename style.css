@@ -434,6 +434,139 @@ table tr:hover {
     border: 1px solid #e0e0e0;
 }
 
+/* Leaderboard Table Styles */
+.leaderboard-table-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.leaderboard-table-wrapper {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.leaderboard-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.leaderboard-table th {
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95em;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.leaderboard-table th.rank-col {
+    width: 80px;
+    text-align: center;
+}
+
+.leaderboard-table th.model-col {
+    width: 200px;
+}
+
+.leaderboard-table th.score-col {
+    width: 120px;
+    text-align: center;
+}
+
+.leaderboard-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.leaderboard-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.leaderboard-table td {
+    padding: 12px;
+    font-size: 0.9em;
+}
+
+.rank-cell {
+    text-align: center;
+    font-weight: 600;
+    position: relative;
+}
+
+.rank-icon {
+    margin-right: 5px;
+    font-size: 1.1em;
+}
+
+.model-row.rank-1 .rank-icon {
+    color: #ffd700; /* Gold */
+}
+
+.model-row.rank-2 .rank-icon {
+    color: #c0c0c0; /* Silver */
+}
+
+.model-row.rank-3 .rank-icon {
+    color: #cd7f32; /* Bronze */
+}
+
+.model-row.rank-1 {
+    background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%);
+}
+
+.model-row.rank-2 {
+    background: linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.05) 100%);
+}
+
+.model-row.rank-3 {
+    background: linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.05) 100%);
+}
+
+.model-cell {
+    font-weight: 500;
+    color: #2c3e50;
+    font-family: 'Courier New', monospace;
+}
+
+.score-cell {
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+}
+
+.overall-score {
+    font-weight: 700;
+    color: #2c3e50;
+    background: rgba(103, 126, 234, 0.1);
+    border-radius: 4px;
+}
+
+.baseline-row {
+    background: rgba(108, 117, 125, 0.1);
+    border-top: 2px solid #6c757d;
+    font-style: italic;
+}
+
+.baseline-row .model-cell {
+    color: #6c757d;
+}
+
 .stats-container {
     display: flex;
     justify-content: space-around;
