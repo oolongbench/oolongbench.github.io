@@ -20,7 +20,7 @@ body {
 h1 {
     text-align: left;
     color: #8b6914;
-    font-family: 'Avant Garde Bk BT';
+    font-family: 'Alegreya';
     font-size: 1.6em;
     margin-bottom: 6px;
 }
@@ -303,11 +303,11 @@ table tr:hover {
     cursor: pointer;
 }
 
-.prompt h2:hover, .team-header:hover {
+.prompt h2:hover, .team-header:hover, .leaderboard-header:hover {
     color: #cd853f;
 }
 
-.prompt h2, .team-header {
+.prompt h2, .team-header, .leaderboard-header {
     cursor: pointer;
 }
 
@@ -329,30 +329,152 @@ table tr:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 30px;
+    padding: 20px 0;
 }
 
 .team-member {
     text-align: center;
-    margin: 10px;
-    flex: 1 1 calc(50% - 20px); /* adjusts to take up 50% of the container width minus margins */
-    box-sizing: border-box;
+    flex: 0 1 200px;
+    max-width: 200px;
 }
 
 .team-img {
     border-radius: 50%;
     width: 150px;
     height: 150px;
-    transition: transform 0.3s;
-    box-shadow: 0 0 10px rgba(139, 105, 20, 0.5);
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 105, 20, 0.3);
+    border: 3px solid #b8860b;
 }
 
 .team-img:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(139, 105, 20, 0.5);
 }
 
-.team p {
+.team-member p {
     color: #b8860b;
     font-weight: bold;
+    margin-top: 15px;
+    font-size: 1.1em;
+}
+
+.team-member a {
+    color: #b8860b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.team-member a:hover {
+    color: #cd853f;
+    text-decoration: underline;
+}
+
+/* Contact and Citation sections */
+.contact, .citation {
+    margin-top: 30px;
+}
+
+.contact-header, .citation-header {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.contact-header:hover, .citation-header:hover {
+    color: #cd853f;
+}
+
+.contact-section, .citation-section {
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-top: 10px;
+}
+
+.contact-section p {
+    margin: 0;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.contact-section code {
+    background-color: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #8b6914;
+    font-weight: bold;
+}
+
+.citation-section pre {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.citation-section code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #333;
+}
+
+/* Leaderboard styles */
+.leaderboard-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.stat-item h3 {
+    color: #b8860b;
+    font-size: 2em;
+    margin: 0 0 5px 0;
+    font-family: 'Alegreya', cursive;
+}
+
+.stat-item p {
+    color: #666;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.stat-item small {
+    color: #888;
+    font-size: 0.8em;
+}
+
+#leaderboard-chart {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .caution-flag {
@@ -514,7 +636,17 @@ table tr:hover {
     }
 
     .team-member {
-        flex: 1 1 100%; 
+        flex: 0 1 150px;
+        max-width: 150px;
+    }
+    
+    .team-section {
+        gap: 15px;
+    }
+    
+    .team-img {
+        width: 120px;
+        height: 120px;
     }
 
     #leaderboard {
@@ -628,7 +760,11 @@ table tr:hover {
     }
 
     .team-member {
-        flex: 1 1 100%;
+        flex: 0 1 180px; max-width: 180px;
+    
+    .team-section {
+        gap: 20px;
+    }
     }
 
     #leaderboard {
@@ -740,7 +876,11 @@ table tr:hover {
     }
 
     .team-member {
-        flex: 1 1 100%;
+        flex: 0 1 200px; max-width: 200px;
+    
+    .team-section {
+        gap: 25px;
+    }
     }
 
     #leaderboard {

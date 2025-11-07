@@ -11,6 +11,11 @@
     gtag('config', 'G-F5MVDYGXEV');
     </script>
     <title>Oolong leaderboard</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="fontawesome/css/all.css"> <!-- Local FontAwesome CSS -->
@@ -19,28 +24,73 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="container">
         <h1>
-            <img src="mug.png" alt="Mug icon" style="vertical-align: middle; margin-right: 2px; width: 50px; height: auto; position: relative; top: -10px">
+            <i class="fa-solid fa-mug-hot" style="vertical-align: middle; margin-right: 10px; font-size: 40px; color: #8b6914; position: relative; top: -2px"></i>
             Oolong: Evaluating Long Context Reasoning and Aggregation Capabilities
         </h1>
         <hr><br>
         <section class="hero">
             <p class="lead">Oolong is a challenging long-context reasoning benchmark. Questions require multi-step reasoning to identify relevant sections of input, label or categorize these sections, and then accumulate information to make distributional-level decisions. See our <a href="https://arxiv.org/abs/2511.02817"><i class="fas fa-file-alt"></i> paper</a> and <a href="https://github.com/abertsch72/oolong"><i class="fab fa-github"></i> GitHub repo</a> for details.</p>
 
-            <p><b>Leaderboard coming soon, stay tuned!</b></p>
         </section>
         
-
-
+        <div class="leaderboard">
+            <h2 class="leaderboard-header"><i class="fas fa-trophy"></i>&nbsp;&nbsp;&nbsp;&nbsp;Leaderboard</h2>
+            <div id="leaderboard-section" class="leaderboard-section">
+                <div id="leaderboard-chart" style="width: 100%; height: 500px; max-width: 1150px; margin: 0 auto;"></div>
+            </div>
+        </div>
 
         <div class="team">
             <h2 class="team-header" onclick="toggleTeam('team-section')"><i class="fas fa-users"></i>&nbsp;&nbsp;&nbsp;&nbsp;Team</h2>
             <div id="team-section" class="team-section">
-                Oolong was a joint effort by Amanda Bertsch, Adithya Pratapa, Teruko Mitamura, Graham Neubig, and Matthew R. Gormley at Carnegie Mellon University.
+                <div class="team-member">
+                    <img src="team-photos/amanda.jpg" alt="Amanda Bertsch" class="team-img">
+                    <p><a href="https://www.cs.cmu.edu/~abertsch/" target="_blank">Amanda Bertsch</a></p>
+                </div>
+                <div class="team-member">
+                    <img src="team-photos/adithya.jpeg" alt="Adithya Pratapa" class="team-img">
+                    <p><a href="https://adithya7.github.io/" target="_blank">Adithya Pratapa</a></p>
+                </div>
+                <div class="team-member">
+                    <img src="team-photos/teruko.jpg" alt="Teruko Mitamura" class="team-img">
+                    <p><a href="https://www.cs.cmu.edu/~teruko/" target="_blank">Teruko Mitamura</a></p>
+                </div>
+                <div class="team-member">
+                    <img src="team-photos/graham.jpg" alt="Graham Neubig" class="team-img">
+                    <p><a href="http://www.phontron.com/" target="_blank">Graham Neubig</a></p>
+                </div>
+                <div class="team-member">
+                    <img src="team-photos/matt.jpg" alt="Matthew R. Gormley" class="team-img">
+                    <p><a href="https://www.cs.cmu.edu/~mgormley/" target="_blank">Matthew R. Gormley</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact">
+            <h2 class="contact-header" onclick="toggleSection('contact-section')"><i class="fas fa-envelope"></i>&nbsp;&nbsp;&nbsp;&nbsp;Contact</h2>
+            <div id="contact-section" class="contact-section">
+                <p>Questions about Oolong? Have a model you'd like us to evaluate? Reach out to <code>abertsch@cs.cmu.edu</code>.</p>
+            </div>
+        </div>
+
+        <div class="citation">
+            <h2 class="citation-header" onclick="toggleSection('citation-section')"><i class="fas fa-quote-left"></i>&nbsp;&nbsp;&nbsp;&nbsp;Citation</h2>
+            <div id="citation-section" class="citation-section">
+                <pre><code>@misc{bertsch2025oolongevaluatinglongcontext,
+      title={Oolong: Evaluating Long Context Reasoning and Aggregation Capabilities}, 
+      author={Amanda Bertsch and Adithya Pratapa and Teruko Mitamura and Graham Neubig and Matthew R. Gormley},
+      year={2025},
+      eprint={2511.02817},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2511.02817}, 
+}</code></pre>
             </div>
         </div>
 
@@ -59,6 +109,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="script.js"></script>
+    <script src="leaderboard.js"></script>
     <script>
 
         function toggleTeam(id) {
@@ -70,10 +121,24 @@
             }
         }
 
-        // Initially hide the prompt texts and team section
-        //document.getElementById('prompt-text').style.display = 'none';
-       // document.getElementById('prompt-simple-text').style.display = 'none';
+        function toggleSection(id) {
+            var section = document.getElementById(id);
+            if (section.style.display === "none") {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        }
+
+        // Initially hide sections
         document.getElementById('team-section').style.display = 'none';
+        document.getElementById('contact-section').style.display = 'none';
+        document.getElementById('citation-section').style.display = 'none';
+        
+        // Initialize leaderboard immediately since it's always visible
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLeaderboard();
+        });
     </script>
 </body>
 </html>
