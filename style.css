@@ -20,7 +20,7 @@ body {
 h1 {
     text-align: left;
     color: #8b6914;
-    font-family: 'Cinzel Decorative';
+    font-family: 'Avant Garde Bk BT';
     font-size: 1.6em;
     margin-bottom: 6px;
 }
@@ -30,18 +30,6 @@ h2 {
     font-family: 'Alegreya', cursive;
     color: #b8860b;
     font-size: 2em; /* Smaller than h1 */
-}
-
-.nocha {
-    font-family: 'Cinzel Decorative', cursive;
-    font-weight: bold;
-    color: #ff5733; /* Different color for "No" and "Cha" */
-}
-
-.nocha-2 {
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 1.2em;
-    color: #b8860b;
 }
 
 #leaderboard a {
