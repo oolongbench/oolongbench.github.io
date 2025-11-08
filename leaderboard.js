@@ -6,17 +6,18 @@
 // Create leaderboard table
 function createLeaderboardTable() {
     // Table 4 data from the Oolong paper - EXACT values from the paper
+    // Using OOLONG-synth Avg. and OOLONG-real Avg. columns from Table 4
+    // Overall is calculated as simple average of synth and real scores
     const table4Data = [
-        { model: 'GPT-5', synthScore: 70.75, realScore: 45.72, overall: 58.24 },
-        { model: 'Gemini-2.5-Pro', synthScore: 55.29, realScore: 50.81, overall: 53.05 },
-        { model: 'o3', synthScore: 62.37, realScore: 33.57, overall: 47.97 },
-        { model: 'GPT-5-mini', synthScore: 63.68, realScore: 29.90, overall: 46.79 },
-        { model: 'Claude-Sonnet-4', synthScore: 58.18, realScore: 32.98, overall: 45.58 },
-        { model: 'o4-mini', synthScore: 56.74, realScore: 21.77, overall: 39.26 },
-        { model: 'GPT-5-nano', synthScore: 50.73, realScore: 26.82, overall: 38.78 },
-        { model: 'Deepseek-R1', synthScore: 13.11, realScore: 27.35, overall: 20.23 },
-        { model: 'Llama-4-Maverick', synthScore: 16.37, realScore: 2.11, overall: 9.24 },
-        { model: 'Random baseline', synthScore: null, realScore: 1.62, overall: null }
+        { model: 'GPT-5', synthScore: 70.75, realScore: 47.00, overall: 58.88 },
+        { model: 'Gemini-2.5-Pro', synthScore: 55.29, realScore: 52.95, overall: 54.12 },
+        { model: 'o3', synthScore: 62.37, realScore: 36.71, overall: 49.54 },
+        { model: 'GPT-5-mini', synthScore: 63.68, realScore: 34.55, overall: 49.11 },
+        { model: 'Claude-Sonnet-4', synthScore: 58.18, realScore: 36.75, overall: 47.47 },
+        { model: 'o4-mini', synthScore: 56.74, realScore: 27.13, overall: 41.94 },
+        { model: 'GPT-5-nano', synthScore: 50.73, realScore: 31.05, overall: 40.89 },
+        { model: 'Deepseek-R1', synthScore: 13.11, realScore: 32.00, overall: 22.55 },
+        { model: 'Llama-4-Maverick', synthScore: 16.37, realScore: 2.07, overall: 9.22 }
     ];
     
     // Data is already sorted by overall average from the paper
@@ -38,22 +39,18 @@ function createLeaderboardTable() {
     `;
     
     table4Data.forEach((modelData, index) => {
-        const rank = modelData.overall !== null ? index + 1 : '';
-        const isBaseline = modelData.model === 'Random baseline';
-        const rankClass = rank <= 3 && rank > 0 ? `rank-${rank}` : '';
-        const rowClass = isBaseline ? 'baseline-row' : `model-row ${rankClass}`;
+        const rank = index + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const rowClass = `model-row ${rankClass}`;
         
-        let rankIcon = '';
-        if (rank === 1) rankIcon = '🥇';
-        else if (rank === 2) rankIcon = '🥈';
-        else if (rank === 3) rankIcon = '🥉';
+        const medalIcon = rank <= 3 ? `<i class="fas fa-medal rank-icon"></i>` : '';
         
-        const formatScore = (score) => score !== null ? score.toFixed(2) : '—';
+        const formatScore = (score) => score.toFixed(2);
         
         tableHTML += `
             <tr class="${rowClass}">
                 <td class="rank-cell">
-                    <span class="rank-icon">${rankIcon}</span>
+                    ${medalIcon}
                     ${rank}
                 </td>
                 <td class="model-cell">${modelData.model}</td>
