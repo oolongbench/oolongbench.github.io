@@ -5,112 +5,66 @@
 
 // Create leaderboard table
 function createLeaderboardTable() {
-    const synthData = [
-        ['gemini-2.5-pro', 0.8854, 0.8447, 0.8774, 0.8813, 0.6984, 0.5683, 0.3656, 0.2506, 0.1329, null, null],
-        ['gpt-5-nano', 0.8683, 0.8137, 0.7733, 0.7096, 0.5453, 0.4781, 0.4102, 0.3931, 0.3648, null, null],
-        ['gpt-5-mini', 0.8701, 0.8457, 0.8457, 0.8513, 0.7765, 0.6464, 0.5014, 0.4085, 0.4005, null, null],
-        ['gpt-5', 0.8654, 0.8429, 0.8550, 0.8556, 0.8445, 0.7612, 0.6124, 0.4636, 0.4003, null, null],
-        ['o4-mini', 0.8186, 0.8064, 0.8197, 0.8307, 0.6510, 0.5186, 0.4415, 0.3953, null, null, null],
-        ['o3', 0.8629, 0.8468, 0.8655, 0.8680, 0.7952, 0.6323, 0.4486, 0.3745, null, null, null],
-        ['claude-sonnet-4', null, null, null, null, null, null, null, null, null, null, null],
-        ['llama-4-maverick', null, null, null, null, null, null, null, null, null, null, null],
-        ['deepseek-r1-0528', null, null, null, null, null, null, null, null, null, null, null],
-        ['random-baseline', 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+    // Table 4 data from the Oolong paper - EXACT values from the paper
+    const table4Data = [
+        { model: 'GPT-5', synthScore: 70.75, realScore: 45.72, overall: 58.24 },
+        { model: 'Gemini-2.5-Pro', synthScore: 55.29, realScore: 50.81, overall: 53.05 },
+        { model: 'o3', synthScore: 62.37, realScore: 33.57, overall: 47.97 },
+        { model: 'GPT-5-mini', synthScore: 63.68, realScore: 29.90, overall: 46.79 },
+        { model: 'Claude-Sonnet-4', synthScore: 58.18, realScore: 32.98, overall: 45.58 },
+        { model: 'o4-mini', synthScore: 56.74, realScore: 21.77, overall: 39.26 },
+        { model: 'GPT-5-nano', synthScore: 50.73, realScore: 26.82, overall: 38.78 },
+        { model: 'Deepseek-R1', synthScore: 13.11, realScore: 27.35, overall: 20.23 },
+        { model: 'Llama-4-Maverick', synthScore: 16.37, realScore: 2.11, overall: 9.24 },
+        { model: 'Random baseline', synthScore: null, realScore: 1.62, overall: null }
     ];
-
-    const realData = [
-        ['gemini-2.5-pro', 0.6012, 0.5081, 0.4793, 0.4129, 0.3790, 0.3428, 0.3411, 0.2958, 0.2984, null],
-        ['gpt-5', 0.5874, 0.4572, 0.3653, 0.2795, 0.2129, 0.1973, null, null, null, null],
-        ['gpt-5-mini', 0.4986, 0.2990, 0.2389, 0.2135, 0.1775, 0.1536, null, null, null, null],
-        ['gpt-5-nano', 0.4309, 0.2682, 0.2323, 0.2037, 0.1651, 0.1687, null, null, null, null],
-        ['o3', 0.5057, 0.3357, 0.2599, 0.2289, null, null, null, null, null, null],
-        ['o4-mini', 0.4169, 0.2177, 0.1793, 0.1462, null, null, null, null, null, null],
-        ['claude-sonnet-4', 0.5058, 0.3298, 0.2670, 0.2700, 0.2423, 0.2211, 0.2377, 0.2058, 0.1897, 0.1455],
-        ['llama-4-maverick', null, null, null, null, null, null, null, null, null, null],
-        ['deepseek-r1-0528', 0.4785, 0.2735, 0.2081, null, null, null, null, null, null, null],
-        ['random-baseline', 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
-    ];
-
-    // Calculate average scores for ranking
-    const modelScores = {};
     
-    synthData.forEach(row => {
-        const model = row[0];
-        const scores = row.slice(1).filter(score => score !== null);
-        if (scores.length > 0) {
-            const avgSynth = scores.reduce((a, b) => a + b, 0) / scores.length;
-            modelScores[model] = { synth: avgSynth, real: 0, count: 1 };
-        }
-    });
-
-    realData.forEach(row => {
-        const model = row[0];
-        const scores = row.slice(1).filter(score => score !== null);
-        if (scores.length > 0) {
-            const avgReal = scores.reduce((a, b) => a + b, 0) / scores.length;
-            if (modelScores[model]) {
-                modelScores[model].real = avgReal;
-                modelScores[model].count = 2;
-            } else {
-                modelScores[model] = { synth: 0, real: avgReal, count: 1 };
-            }
-        }
-    });
-
-    // Calculate overall average and sort
-    const sortedModels = Object.entries(modelScores)
-        .map(([model, scores]) => ({
-            model,
-            synthAvg: scores.synth,
-            realAvg: scores.real,
-            overallAvg: (scores.synth + scores.real) / (scores.count === 2 ? 2 : 1)
-        }))
-        .filter(item => item.model !== 'random-baseline')
-        .sort((a, b) => b.overallAvg - a.overallAvg);
-
-    // Create HTML table
+    // Data is already sorted by overall average from the paper
+    
+    // Generate table HTML
     let tableHTML = `
-        <div class="leaderboard-table-wrapper">
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th class="rank-col">Rank</th>
-                        <th class="model-col">Model</th>
-                        <th class="score-col">OOLONG-synth Avg</th>
-                        <th class="score-col">OOLONG-real Avg</th>
-                        <th class="score-col">Overall Avg</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="leaderboard-table-wrapper">
+    <table class="leaderboard-table">
+        <thead>
+            <tr>
+                <th class="rank-col">Rank</th>
+                <th class="model-col">Model</th>
+                <th class="score-col">OOLONG-synth</th>
+                <th class="score-col">OOLONG-real</th>
+                <th class="score-col">Overall</th>
+            </tr>
+        </thead>
+        <tbody>
     `;
-
-    sortedModels.forEach((item, index) => {
-        const rank = index + 1;
-        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+    
+    table4Data.forEach((modelData, index) => {
+        const rank = modelData.overall !== null ? index + 1 : '';
+        const isBaseline = modelData.model === 'Random baseline';
+        const rankClass = rank <= 3 && rank > 0 ? `rank-${rank}` : '';
+        const rowClass = isBaseline ? 'baseline-row' : `model-row ${rankClass}`;
+        
+        let rankIcon = '';
+        if (rank === 1) rankIcon = '🥇';
+        else if (rank === 2) rankIcon = '🥈';
+        else if (rank === 3) rankIcon = '🥉';
+        
+        const formatScore = (score) => score !== null ? score.toFixed(2) : '—';
         
         tableHTML += `
-            <tr class="model-row ${rankClass}">
+            <tr class="${rowClass}">
                 <td class="rank-cell">
-                    ${rank <= 3 ? `<i class="fas fa-medal rank-icon"></i>` : ''}
+                    <span class="rank-icon">${rankIcon}</span>
                     ${rank}
                 </td>
-                <td class="model-cell">${item.model}</td>
-                <td class="score-cell">${item.synthAvg > 0 ? item.synthAvg.toFixed(3) : '—'}</td>
-                <td class="score-cell">${item.realAvg > 0 ? item.realAvg.toFixed(3) : '—'}</td>
-                <td class="score-cell overall-score">${item.overallAvg.toFixed(3)}</td>
+                <td class="model-cell">${modelData.model}</td>
+                <td class="score-cell">${formatScore(modelData.synthScore)}</td>
+                <td class="score-cell">${formatScore(modelData.realScore)}</td>
+                <td class="score-cell overall-score">${formatScore(modelData.overall)}</td>
             </tr>
         `;
     });
-
-    // Add random baseline at the bottom
+    
     tableHTML += `
-            <tr class="model-row baseline-row">
-                <td class="rank-cell">—</td>
-                <td class="model-cell">random-baseline</td>
-                <td class="score-cell">0.250</td>
-                <td class="score-cell">0.250</td>
-                <td class="score-cell overall-score">0.250</td>
-            </tr>
         </tbody>
     </table>
     </div>
@@ -118,7 +72,6 @@ function createLeaderboardTable() {
 
     document.getElementById('leaderboard-table-container').innerHTML = tableHTML;
 }
-
 // Color scheme from pre.tex - EXACT RGB values
 const colors = {
     'gemini-2.5-pro': 'rgb(240,228,66)',      // cbYellow
