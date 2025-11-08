@@ -22,8 +22,11 @@ function createLeaderboardTable() {
     
     // Data is already sorted by overall average from the paper
     
-    // Generate table HTML
+    // Generate table HTML with info box
     let tableHTML = `
+    <div class="leaderboard-info-box">
+        <p>For a single leaderboard result, we report scores averaged over 8K-175K inputs. The leaderboard is sorted by the average between Oolong-synth and Oolong-real score.</p>
+    </div>
     <div class="leaderboard-table-wrapper">
     <table class="leaderboard-table">
         <thead>

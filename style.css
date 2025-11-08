@@ -19,7 +19,7 @@ body {
 
 h1 {
     text-align: left;
-    color: #8b6914;
+    color: #b8860b;
     font-family: 'Alegreya';
     font-size: 1.6em;
     margin-bottom: 6px;
@@ -432,6 +432,27 @@ table tr:hover {
     background-color: #fafafa;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
+}
+
+.leaderboard-info-box {
+    margin: 20px 0;
+    padding: 15px 20px;
+    background-color: #f8f9fa !important;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    border-left: 4px solid #8b6914;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+.leaderboard-info-box p {
+    margin: 0;
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 /* Leaderboard Table Styles */
@@ -1031,4 +1052,14 @@ table tr:hover {
     .example-content p {
         margin: 10px 0;
     }
+}
+/* Footer link styling */
+footer a {
+    color: #8b6914 !important;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #6d5210 !important;
+    text-decoration: underline;
 }
