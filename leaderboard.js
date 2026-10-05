@@ -60,33 +60,37 @@ function createLeaderboardTable(scores) {
     const dagger = '<sup title="Unsupported context lengths count as zero">†</sup>';
     const format = split => split.score.toFixed(2) + (split.limited ? dagger : '');
     document.getElementById('leaderboard-table-container').innerHTML = `
-        <div class="leaderboard-info-box">
-            <p>OOLONG-synth averages five context lengths (8K, 16K, 32K, 64K, 128K); OOLONG-real averages three (approximately 55K, 118K, 175K). Overall is the average of the two scores. Scores are shown out of 100.</p>
-            <p>† Context lengths beyond a model’s maximum count as zero in the leaderboard average. Missing measurements are not plotted.</p>
-        </div>
         <div class="leaderboard-table-wrapper"><table class="leaderboard-table">
             <thead><tr><th class="rank-col" scope="col">Rank</th><th class="model-col" scope="col">Model</th>
             <th class="score-col" scope="col">OOLONG-synth</th><th class="score-col" scope="col">OOLONG-real</th>
             <th class="score-col" scope="col">Overall</th></tr></thead>
             <tbody>${scores.map((model, index) => `<tr class="model-row ${index < 3 ? `rank-${index + 1}` : ''}">
-                <td class="rank-cell">${index < 3 ? '<i class="fas fa-medal rank-icon" aria-hidden="true"></i>' : ''}${index + 1}</td>
+                <td class="rank-cell">${index + 1}</td>
                 <td class="model-cell">${model.name}</td><td class="score-cell">${format(model.synth)}</td>
                 <td class="score-cell">${format(model.real)}</td>
                 <td class="score-cell overall-score">${model.overall.toFixed(2)}${model.synth.limited || model.real.limited ? dagger : ''}</td>
             </tr>`).join('')}</tbody>
-        </table></div>`;
+        </table></div>
+        <div class="leaderboard-info-box">
+            <p>OOLONG-synth averages five context lengths (8K, 16K, 32K, 64K, 128K); OOLONG-real averages three (approximately 55K, 118K, 175K). Overall is the average of the two scores. Scores are shown out of 100.</p>
+            <p>† Context lengths beyond a model’s maximum count as zero in the leaderboard average. Missing measurements are not plotted.</p>
+        </div>
+        `;
 }
 
 async function initializeLeaderboard() {
     const filter = document.getElementById('model-filter');
+    const category = () => filter.querySelector('input:checked').value;
     try {
         const responses = await Promise.all(['synth_results.csv', 'real_results.csv'].map(file => fetch(file)));
         if (responses.some(response => !response.ok)) throw new Error('Unable to fetch results');
         const [synthData, realData] = await Promise.all(responses.map(async response => parseCSV(await response.text())));
         createLeaderboardTable(leaderboardScores(synthData, realData));
-        await createOolongPlots(synthData, realData, filter.value);
+        await createOolongPlots(synthData, realData, category());
         filter.disabled = false;
-        filter.addEventListener('change', () => createOolongPlots(synthData, realData, filter.value));
+        const render = () => createOolongPlots(synthData, realData, category());
+        filter.addEventListener('change', render);
+        window.matchMedia('(max-width: 700px)').addEventListener('change', render);
     } catch (error) {
         console.error('Error loading results:', error);
         document.getElementById('leaderboard-table-container').innerHTML = '<p role="alert">Unable to load results. Please refresh to try again.</p>';
@@ -115,33 +119,30 @@ function createOolongPlots(synthData, realData, category = 'all') {
             });
         });
     });
+    const compact = window.matchMedia('(max-width: 700px)').matches;
     // Layout configuration
     const layout = {
-        title: {
-            text: 'Scores by context window length for OOLONG-synth and OOLONG-real',
-            x: 0.45,
-            font: { size: 16 }
-        },
-        height: 650,
+        font: { family: 'Arial, sans-serif', color: '#51483e', size: 12 },
+        height: compact ? 1100 : 720,
         autosize: true,
         
         // Left plot (OOLONG-synth)
         xaxis: {
             title: 'Context Length',
             type: 'log',
-            domain: [0, 0.43],
+            domain: compact ? [0, 1] : [0, 0.43],
             ticktext: ['8K', '16K', '32K', '64K', '128K', '256K', '512K'],
             tickvals: [8192, 16384, 32768, 65536, 131072, 262144, 524288],
             range: [Math.log10(6500), Math.log10(550000)],
-            gridcolor: 'lightgray',
+            gridcolor: '#eee9e0',
             showgrid: true,
             gridwidth: 1
         },
         yaxis: {
             title: 'Score',
             range: [0, 1],
-            domain: [0, 1],
-            gridcolor: 'lightgray',
+            domain: compact ? [0.60, 1] : [0, 1],
+            gridcolor: '#eee9e0',
             showgrid: true,
             gridwidth: 1
         },
@@ -149,33 +150,34 @@ function createOolongPlots(synthData, realData, category = 'all') {
         // Right plot (OOLONG-real)
         xaxis2: {
             title: 'Context Length',
+            anchor: 'y2',
             type: 'log',
-            domain: [0.55, 1],
+            domain: compact ? [0, 1] : [0.55, 1],
             ticktext: ['64K', '128K', '256K', '512K', '916K'],
             tickvals: [65536, 131072, 262144, 524288, 916174],
             range: [Math.log10(48000), Math.log10(1000000)],
-            gridcolor: 'lightgray',
+            gridcolor: '#eee9e0',
             showgrid: true,
             gridwidth: 1
         },
         yaxis2: {
             title: '',
             range: [0, 1],
-            domain: [0, 1],
+            domain: compact ? [0, 0.40] : [0, 1],
             anchor: 'x2',
-            side: 'right',
-            gridcolor: 'lightgray',
+            side: compact ? 'left' : 'right',
+            gridcolor: '#eee9e0',
             showgrid: true,
             gridwidth: 1
         },
         
-        margin: { l: 50, r: 35, t: 65, b: 240 },
+        margin: { l: 48, r: compact ? 16 : 35, t: 45, b: compact ? 380 : 220 },
 
         // Shared legend below the plots
         legend: {
             orientation: 'h',
             yanchor: 'top',
-            y: -0.25,
+            y: compact ? -0.14 : -0.22,
             xanchor: 'left',
             x: 0,
             font: { size: 11 },
@@ -190,21 +192,21 @@ function createOolongPlots(synthData, realData, category = 'all') {
         annotations: [
             {
                 text: 'OOLONG-synth',
-                x: 0.2,
+                x: compact ? 0.5 : 0.2,
                 y: 1.05,
                 xref: 'paper',
                 yref: 'paper',
                 showarrow: false,
-                font: { size: 14, color: 'black' }
+                font: { size: 14, color: '#51483e' }
             },
             {
                 text: 'OOLONG-real',
-                x: 0.775,
-                y: 1.05,
+                x: compact ? 0.5 : 0.775,
+                y: compact ? 0.45 : 1.05,
                 xref: 'paper',
                 yref: 'paper',
                 showarrow: false,
-                font: { size: 14, color: 'black' }
+                font: { size: 14, color: '#51483e' }
             }
         ]
     };

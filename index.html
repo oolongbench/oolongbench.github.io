@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F5MVDYGXEV"></script>
     <script>
@@ -16,31 +17,22 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="fontawesome/css/all.css"> <!-- Local FontAwesome CSS -->
-    <link href="https://fonts.googleapis.com/css2?family=Scheherazade&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Alegreya&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="container">
-        <h1>
-            <i class="fa-solid fa-mug-hot" style="vertical-align: middle; margin-right: 10px; font-size: 40px; color: #8b6914; position: relative; top: -2px"></i>
-            Oolong: Evaluating Long Context Reasoning and Aggregation Capabilities
-        </h1>
-        <hr><br>
-        <section class="hero">
+        <header class="hero">
+            <h1><i class="fa-solid fa-mug-hot" aria-hidden="true"></i> Oolong</h1>
+            <p class="subtitle">Evaluating Long Context Reasoning<br class="desktop-break"> and Aggregation Capabilities</p>
             <p class="lead">Oolong is a challenging long-context reasoning benchmark. Questions require multi-step reasoning to identify relevant sections of input, label or categorize these sections, and then accumulate information to make distributional-level decisions. See our <a href="https://arxiv.org/abs/2511.02817"><i class="fas fa-file-alt"></i> paper</a> and <a href="https://github.com/abertsch72/oolong"><i class="fab fa-github"></i> GitHub repo</a> for details.</p>
+        </header>
 
-        </section>
-        
         <div class="leaderboard">
-            <h2 class="leaderboard-header"><i class="fas fa-trophy"></i>&nbsp;&nbsp;&nbsp;&nbsp;Leaderboard</h2>
+            <div class="section-heading"><h2>Leaderboard</h2></div>
             <div id="leaderboard-table-section" class="leaderboard-table-section">
                 <div id="leaderboard-table-container">
                     <!-- Leaderboard table will be inserted here -->
@@ -49,21 +41,20 @@
         </div>
 
         <div class="performance">
-            <h2 class="performance-header"><i class="fas fa-chart-line"></i>&nbsp;&nbsp;&nbsp;&nbsp;Performance over Context Length</h2>
+            <div class="section-heading"><h2>Performance over Context Length</h2></div>
             <div id="performance-section" class="performance-section">
-                <div class="plot-controls"><label for="model-filter">Show models:</label>
-                    <select id="model-filter" disabled>
-                        <option value="all">All models</option>
-                        <option value="closed">Closed models</option>
-                        <option value="open">Open models</option>
-                    </select>
-                </div>
-                <div id="leaderboard-chart" style="width: 100%; height: 650px; max-width: 1150px; margin: 0 auto;"></div>
+                <fieldset id="model-filter" class="plot-controls" disabled>
+                    <legend class="sr-only">Show models:</legend>
+                    <label><input type="radio" name="model-category" value="all" checked><span>All models</span></label>
+                    <label><input type="radio" name="model-category" value="closed"><span>Closed models</span></label>
+                    <label><input type="radio" name="model-category" value="open"><span>Open models</span></label>
+                </fieldset>
+                <div id="leaderboard-chart" aria-label="Performance over Context Length"></div>
             </div>
         </div>
 
-        <div class="team">
-            <h2 class="team-header" onclick="toggleTeam('team-section')"><i class="fas fa-users"></i>&nbsp;&nbsp;&nbsp;&nbsp;Team</h2>
+        <details class="team supporting-section">
+            <summary>Team<span aria-hidden="true">+</span></summary>
             <div id="team-section" class="team-section">
                 <div class="team-member">
                     <img src="team-photos/amanda.jpg" alt="Amanda Bertsch" class="team-img">
@@ -86,17 +77,17 @@
                     <p><a href="https://www.cs.cmu.edu/~mgormley/" target="_blank">Matthew R. Gormley</a></p>
                 </div>
             </div>
-        </div>
+        </details>
 
-        <div class="contact">
-            <h2 class="contact-header" onclick="toggleSection('contact-section')"><i class="fas fa-envelope"></i>&nbsp;&nbsp;&nbsp;&nbsp;Contact</h2>
+        <details class="contact supporting-section">
+            <summary>Contact<span aria-hidden="true">+</span></summary>
             <div id="contact-section" class="contact-section">
                 <p>Questions about Oolong? Have a model you'd like us to evaluate? Reach out to <code>abertsch@cs.cmu.edu</code>.</p>
             </div>
-        </div>
+        </details>
 
-        <div class="citation">
-            <h2 class="citation-header" onclick="toggleSection('citation-section')"><i class="fas fa-quote-left"></i>&nbsp;&nbsp;&nbsp;&nbsp;Citation</h2>
+        <details class="citation supporting-section">
+            <summary>Citation<span aria-hidden="true">+</span></summary>
             <div id="citation-section" class="citation-section">
                 <pre><code>@misc{bertsch2025oolongevaluatinglongcontext,
       title={Oolong: Evaluating Long Context Reasoning and Aggregation Capabilities}, 
@@ -108,52 +99,18 @@
       url={https://arxiv.org/abs/2511.02817}, 
 }</code></pre>
             </div>
-        </div>
+        </details>
 
-        <footer>
-            <div class="footer-content" style="background-color: #faf8fa; padding: 10px 0; text-align: center; border-top: 0px solid #dee2e6;">
-                <p style="margin: 0; padding: 0; color: #7c6c7d; font-size: 18px;">
-                    Webpage style/template from the excellent <a href="https://novelchallenge.github.io/">NoCha benchmark</a>! Last updated: <span style="font-weight: bold; color: #343a40;">October 5, 2026</span>
-                </p>
-            </div>
-        </footer>
+        <footer><span>Webpage style/template from the excellent <a href="https://novelchallenge.github.io/">NoCha benchmark</a>!</span>
+            <span>Last updated: October 5, 2026</span></footer>
         
     </div>
 
     
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="leaderboard.js"></script>
     <script>
-
-        function toggleTeam(id) {
-            var teamSection = document.getElementById(id);
-            if (teamSection.style.display === "none") {
-                teamSection.style.display = "block";
-            } else {
-                teamSection.style.display = "none";
-            }
-        }
-
-        function toggleSection(id) {
-            var section = document.getElementById(id);
-            if (section.style.display === "none") {
-                section.style.display = "block";
-            } else {
-                section.style.display = "none";
-            }
-        }
-
-        // Initially hide sections
-        document.getElementById('team-section').style.display = 'none';
-        document.getElementById('contact-section').style.display = 'none';
-        document.getElementById('citation-section').style.display = 'none';
-        
-        // Initialize leaderboard immediately since it's always visible
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeLeaderboard();
-        });
+        document.addEventListener('DOMContentLoaded', initializeLeaderboard);
     </script>
 </body>
 </html>
