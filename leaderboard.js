@@ -1,268 +1,120 @@
-/**
- * OOLONG Benchmark Leaderboard
- * Reproduces the exact plots from the paper using Plotly
- */
+/** Oolong results from the October 5, 2026 paper source. */
+// Explicit paper roster excludes label/reasoning ablations and synth-only models.
+const models = [
+    ['gemini-3-pro', 'Gemini-3-Pro', 'closed', '#b08b00', 'diamond'],
+    ['gpt-5', 'GPT-5', 'closed', '#0072b2', 'cross'],
+    ['gemini-2.5-pro', 'Gemini-2.5-Pro', 'closed', '#b08b00', 'circle'],
+    ['o3', 'o3', 'closed', '#e69f00', 'x'],
+    ['gpt-5-mini', 'GPT-5-mini', 'closed', '#0072b2', 'x'],
+    ['claude-sonnet-4-20250514', 'Claude-Sonnet-4', 'closed', '#009e73', 'circle'],
+    ['o4-mini', 'o4-mini', 'closed', '#e69f00', 'circle'],
+    ['Gemma4-31B', 'Gemma-4-31B', 'open', '#887600', 'cross'],
+    ['gpt-5-nano', 'GPT-5-nano', 'closed', '#0072b2', 'circle'],
+    ['gpt-5.2', 'GPT-5.2', 'closed', '#0072b2', 'diamond'],
+    ['Qwen3-4B-instruct', 'Qwen3-4B-Instruct', 'open', '#800000', 'circle'],
+    ['Olmo3.1-Think-32B', 'Olmo-3.1-Think-32B', 'open', '#cc79a7', 'square'],
+    ['deepseek-r1-0528', 'Deepseek-R1', 'open', '#666666', 'circle'],
+    ['Olmo3-Think-7B', 'Olmo-3-Think-7B', 'open', '#cc79a7', 'cross'],
+    ['Olmo3.1-Instruct-32B', 'Olmo-3.1-Instruct-32B', 'open', '#cc79a7', 'circle'],
+    ['Olmo3-Instruct-7B', 'Olmo-3-Instruct-7B', 'open', '#cc79a7', 'x'],
+    ['Llama3-3B', 'Llama-3-3B', 'open', '#56b4e9', 'x'],
+    ['Llama3-8B', 'Llama-3-8B', 'open', '#56b4e9', 'square'],
+    ['Qwen3-4B-thinking', 'Qwen3-4B-Thinking', 'open', '#800000', 'x'],
+    ['Llama-4-Maverick-17B-128E-Instruct-FP8', 'Llama-4-Maverick', 'open', '#56b4e9', 'circle']
+].map(([id, name, category, color, marker]) => ({ id, name, category, color, marker }));
+const synthAverageColumns = ['8192', '16384', '32768', '65536', '131072'];
+const realAverageColumns = ['55124', '118711', '175571'];
 
-// Create leaderboard table
-function createLeaderboardTable() {
-    // Table 4 data from the Oolong paper - EXACT values from the paper
-    // Using OOLONG-synth Avg. and OOLONG-real Avg. columns from Table 4
-    // Overall is calculated as simple average of synth and real scores
-    const table4Data = [
-        { model: 'GPT-5', synthScore: 70.75, realScore: 47.00, overall: 58.88 },
-        { model: 'Gemini-2.5-Pro', synthScore: 55.29, realScore: 52.95, overall: 54.12 },
-        { model: 'o3', synthScore: 62.37, realScore: 36.71, overall: 49.54 },
-        { model: 'GPT-5-mini', synthScore: 63.68, realScore: 34.55, overall: 49.11 },
-        { model: 'Claude-Sonnet-4', synthScore: 58.18, realScore: 36.75, overall: 47.47 },
-        { model: 'o4-mini', synthScore: 56.74, realScore: 27.13, overall: 41.94 },
-        { model: 'GPT-5-nano', synthScore: 50.73, realScore: 31.05, overall: 40.89 },
-        { model: 'Deepseek-R1', synthScore: 13.11, realScore: 32.00, overall: 22.55 },
-        { model: 'Llama-4-Maverick', synthScore: 16.37, realScore: 2.07, overall: 9.22 }
-    ];
-    
-    // Data is already sorted by overall average from the paper
-    
-    // Generate table HTML with info box
-    let tableHTML = `
-    <div class="leaderboard-info-box">
-        <p>For a single leaderboard result, we report scores averaged over 8K-175K inputs. The leaderboard is sorted by the average between Oolong-synth and Oolong-real score.</p>
-    </div>
-    <div class="leaderboard-table-wrapper">
-    <table class="leaderboard-table">
-        <thead>
-            <tr>
-                <th class="rank-col">Rank</th>
-                <th class="model-col">Model</th>
-                <th class="score-col">OOLONG-synth</th>
-                <th class="score-col">OOLONG-real</th>
-                <th class="score-col">Overall</th>
-            </tr>
-        </thead>
-        <tbody>
-    `;
-    
-    table4Data.forEach((modelData, index) => {
-        const rank = index + 1;
-        const rankClass = rank <= 3 ? `rank-${rank}` : '';
-        const rowClass = `model-row ${rankClass}`;
-        
-        const medalIcon = rank <= 3 ? `<i class="fas fa-medal rank-icon"></i>` : '';
-        
-        const formatScore = (score) => score.toFixed(2);
-        
-        tableHTML += `
-            <tr class="${rowClass}">
-                <td class="rank-cell">
-                    ${medalIcon}
-                    ${rank}
-                </td>
-                <td class="model-cell">${modelData.model}</td>
-                <td class="score-cell">${formatScore(modelData.synthScore)}</td>
-                <td class="score-cell">${formatScore(modelData.realScore)}</td>
-                <td class="score-cell overall-score">${formatScore(modelData.overall)}</td>
-            </tr>
-        `;
-    });
-    
-    tableHTML += `
-        </tbody>
-    </table>
-    </div>
-    `;
-
-    document.getElementById('leaderboard-table-container').innerHTML = tableHTML;
-}
-// Color scheme from pre.tex - EXACT RGB values
-const colors = {
-    'gemini-2.5-pro': 'rgb(240,228,66)',      // cbYellow
-    'gpt-5-nano': 'rgb(0,114,178)',           // cbBlue
-    'gpt-5-mini': 'rgb(0,114,178)',           // cbBlue
-    'gpt-5': 'rgb(0,114,178)',                // cbBlue
-    'o4-mini': 'rgb(230,159,0)',              // cbOrange
-    'o3': 'rgb(230,159,0)',                   // cbOrange
-    'claude-sonnet-4-20250514': 'rgb(0,158,115)',  // cbGreen
-    'Llama-4-Maverick-17B-128E-Instruct-FP8': 'rgb(86,180,233)',  // cbPurple
-    'deepseek-r1-0528': 'rgb(204,121,167)',   // cbRed
-    'random-baseline': 'rgb(0,0,0)'           // black
-};
-
-// Marker styles from results.tex
-const markers = {
-    'gemini-2.5-pro': 'circle',
-    'gpt-5-nano': 'circle',
-    'gpt-5-mini': 'x',
-    'gpt-5': 'cross',
-    'o4-mini': 'circle',
-    'o3': 'x',
-    'claude-sonnet-4-20250514': 'circle',
-    'Llama-4-Maverick-17B-128E-Instruct-FP8': 'circle',
-    'deepseek-r1-0528': 'circle',
-    'random-baseline': 'circle'
-};
-
-// Model order from results.tex (same order for legend)
-const synthModels = [
-    'gemini-2.5-pro',
-    'gpt-5-nano', 
-    'gpt-5-mini',
-    'gpt-5',
-    'o4-mini',
-    'o3',
-    'claude-sonnet-4-20250514',
-    'Llama-4-Maverick-17B-128E-Instruct-FP8',
-    'deepseek-r1-0528',
-    'random-baseline'
-];
-
-// Real data - same models except random-baseline
-const realModels = [
-    'gemini-2.5-pro',
-    'gpt-5-nano',
-    'gpt-5-mini',
-    'gpt-5',
-    'o4-mini',
-    'o3',
-    'claude-sonnet-4-20250514',
-    'deepseek-r1-0528',
-    'Llama-4-Maverick-17B-128E-Instruct-FP8'
-];
-
-// Parse CSV data
+// These source CSVs have unquoted, comma-separated numeric fields.
 function parseCSV(text) {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',');
-    const data = [];
-    
-    for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',');
-        const row = {};
-        for (let j = 0; j < headers.length; j++) {
-            row[headers[j]] = values[j];
-        }
-        data.push(row);
-    }
-    return data;
+    const [header, ...lines] = text.trim().split(/\r?\n/);
+    const columns = header.split(',').map(value => value.trim());
+    return lines.filter(line => line.trim()).map(line => {
+        const values = line.split(',').map(value => value.trim());
+        return Object.fromEntries(columns.map((column, i) => [column, values[i] ?? '']));
+    });
 }
 
-// Load CSV files and create plots
+function averageScore(row, columns) {
+    if (!row) throw new Error('Missing model results');
+    let limited = false;
+    const total = columns.reduce((sum, column) => {
+        if (!(column in row)) throw new Error(`Missing context column: ${column}`);
+        if (row[column] === '') { limited = true; return sum; }
+        const score = Number(row[column]);
+        if (!Number.isFinite(score) || score < 0 || score > 1) throw new Error('Invalid score');
+        return sum + score;
+    }, 0);
+    return { score: total * 100 / columns.length, limited };
+}
+
+function leaderboardScores(synthData, realData) {
+    return models.map(model => {
+        const synth = averageScore(synthData.find(row => row.model === model.id), synthAverageColumns);
+        const real = averageScore(realData.find(row => row.model === model.id), realAverageColumns);
+        return { ...model, synth, real, overall: (synth.score + real.score) / 2 };
+    }).sort((a, b) => b.overall - a.overall);
+}
+
+function createLeaderboardTable(scores) {
+    const dagger = '<sup title="Unsupported context lengths count as zero">†</sup>';
+    const format = split => split.score.toFixed(2) + (split.limited ? dagger : '');
+    document.getElementById('leaderboard-table-container').innerHTML = `
+        <div class="leaderboard-info-box">
+            <p>OOLONG-synth averages five context lengths (8K, 16K, 32K, 64K, 128K); OOLONG-real averages three (approximately 55K, 118K, 175K). Overall is the average of the two scores. Scores are shown out of 100.</p>
+            <p>† Context lengths beyond a model’s maximum count as zero in the leaderboard average. Missing measurements are not plotted.</p>
+        </div>
+        <div class="leaderboard-table-wrapper"><table class="leaderboard-table">
+            <thead><tr><th class="rank-col" scope="col">Rank</th><th class="model-col" scope="col">Model</th>
+            <th class="score-col" scope="col">OOLONG-synth</th><th class="score-col" scope="col">OOLONG-real</th>
+            <th class="score-col" scope="col">Overall</th></tr></thead>
+            <tbody>${scores.map((model, index) => `<tr class="model-row ${index < 3 ? `rank-${index + 1}` : ''}">
+                <td class="rank-cell">${index < 3 ? '<i class="fas fa-medal rank-icon" aria-hidden="true"></i>' : ''}${index + 1}</td>
+                <td class="model-cell">${model.name}</td><td class="score-cell">${format(model.synth)}</td>
+                <td class="score-cell">${format(model.real)}</td>
+                <td class="score-cell overall-score">${model.overall.toFixed(2)}${model.synth.limited || model.real.limited ? dagger : ''}</td>
+            </tr>`).join('')}</tbody>
+        </table></div>`;
+}
+
 async function initializeLeaderboard() {
+    const filter = document.getElementById('model-filter');
     try {
-        // Load both CSV files
-        const [synthResponse, realResponse] = await Promise.all([
-            fetch('synth_results.csv'),
-            fetch('real_results.csv')
-        ]);
-        
-        const synthText = await synthResponse.text();
-        const realText = await realResponse.text();
-        
-        const synthData = parseCSV(synthText);
-        const realData = parseCSV(realText);
-        
-        // Create the plots
-        createOolongPlots(synthData, realData);
-        
+        const responses = await Promise.all(['synth_results.csv', 'real_results.csv'].map(file => fetch(file)));
+        if (responses.some(response => !response.ok)) throw new Error('Unable to fetch results');
+        const [synthData, realData] = await Promise.all(responses.map(async response => parseCSV(await response.text())));
+        createLeaderboardTable(leaderboardScores(synthData, realData));
+        await createOolongPlots(synthData, realData, filter.value);
+        filter.disabled = false;
+        filter.addEventListener('change', () => createOolongPlots(synthData, realData, filter.value));
     } catch (error) {
-        console.error('Error loading data:', error);
-        document.getElementById('leaderboard-chart').innerHTML = 
-            '<p style="color: red; text-align: center;">Error loading leaderboard data. Please try again later.</p>';
+        console.error('Error loading results:', error);
+        document.getElementById('leaderboard-table-container').innerHTML = '<p role="alert">Unable to load results. Please refresh to try again.</p>';
+        document.getElementById('leaderboard-chart').textContent = 'Results are unavailable.';
     }
 }
 
-function createOolongPlots(synthData, realData) {
-    // Synth data columns (from results.tex line 6)
-    const synthColumns = ['8192', '16384', '32768', '65536', '131072', '262144', '524288'];
-    const contextLengthsSynth = [8192, 16384, 32768, 65536, 131072, 262144, 524288];
-    
+function createOolongPlots(synthData, realData, category = 'all') {
+    const selected = models.filter(model => category === 'all' || model.category === category);
+    const baseline = { id: 'random-baseline', name: 'Random baseline', color: '#000000', marker: 'circle' };
     const traces = [];
-    
-    // Add OOLONG-synth traces (left plot)
-    synthModels.forEach(model => {
-        const modelData = synthData.find(row => row.model === model);
-        if (modelData) {
-            const values = [];
-            const validLengths = [];
-            
-            synthColumns.forEach((col, idx) => {
-                const val = modelData[col];
-                if (val && val.trim() !== '') {
-                    values.push(parseFloat(val));
-                    validLengths.push(contextLengthsSynth[idx]);
-                }
+    [synthData, realData].forEach((data, split) => {
+        const columns = Object.keys(data[0]).filter(column => column !== 'model' && Number(column) >= 8192).sort((a, b) => Number(a) - Number(b));
+        (split === 0 ? [...selected, baseline] : selected).forEach(model => {
+            const row = data.find(row => row.model === model.id);
+            if (!row) throw new Error(`Missing results for ${model.id}`);
+            const points = columns.filter(column => row[column] !== '');
+            traces.push({
+                x: points.map(Number), y: points.map(column => Number(row[column])),
+                mode: 'lines+markers', name: model.name, legendgroup: model.id,
+                showlegend: split === 0, connectgaps: false,
+                line: { color: model.color, width: 2, dash: model.id === baseline.id ? 'dash' : 'solid' },
+                marker: { color: model.color, symbol: model.marker, size: 7 },
+                xaxis: split === 0 ? 'x' : 'x2', yaxis: split === 0 ? 'y' : 'y2',
+                hovertemplate: '%{x:,} tokens<br>Score: %{y:.4f}<extra>%{fullData.name}</extra>'
             });
-            
-            if (values.length > 0) {
-                // Clean up legend names
-                let legendName = model.replace('-20250514', '').replace('Llama-4-Maverick-17B-128E-Instruct-FP8', 'llama-4-maverick');
-                
-                // Line style
-                const dashStyle = model === 'random-baseline' ? 'dash' : 'solid';
-                
-                traces.push({
-                    x: validLengths,
-                    y: values,
-                    mode: 'lines+markers',
-                    name: legendName,
-                    line: {
-                        color: colors[model] || 'rgb(0,0,0)',
-                        width: 2,
-                        dash: dashStyle
-                    },
-                    marker: {
-                        symbol: markers[model] || 'circle',
-                        size: 8,
-                        color: colors[model] || 'rgb(0,0,0)'
-                    },
-                    xaxis: 'x',
-                    yaxis: 'y',
-                    legendgroup: model,
-                    showlegend: true
-                });
-            }
-        }
+        });
     });
-    
-    // Add OOLONG-real traces (right plot)
-    const realColumns = Object.keys(realData[0]).filter(col => col !== 'model');
-    
-    realModels.forEach(model => {
-        const modelData = realData.find(row => row.model === model);
-        if (modelData) {
-            const values = [];
-            const validLengths = [];
-            
-            realColumns.forEach(col => {
-                const val = modelData[col];
-                if (val && val.trim() !== '') {
-                    values.push(parseFloat(val));
-                    validLengths.push(parseInt(col));
-                }
-            });
-            
-            if (values.length > 0) {
-                traces.push({
-                    x: validLengths,
-                    y: values,
-                    mode: 'lines+markers',
-                    name: model,
-                    line: {
-                        color: colors[model] || 'rgb(0,0,0)',
-                        width: 2
-                    },
-                    marker: {
-                        symbol: markers[model] || 'circle',
-                        size: 8,
-                        color: colors[model] || 'rgb(0,0,0)'
-                    },
-                    xaxis: 'x2',
-                    yaxis: 'y2',
-                    legendgroup: model,
-                    showlegend: false  // Legend only in first plot
-                });
-            }
-        }
-    });
-    
     // Layout configuration
     const layout = {
         title: {
@@ -270,14 +122,14 @@ function createOolongPlots(synthData, realData) {
             x: 0.45,
             font: { size: 16 }
         },
-        height: 500,
-        width: 1150,
+        height: 650,
+        autosize: true,
         
         // Left plot (OOLONG-synth)
         xaxis: {
             title: 'Context Length',
             type: 'log',
-            domain: [0, 0.4],
+            domain: [0, 0.43],
             ticktext: ['8K', '16K', '32K', '64K', '128K', '256K', '512K'],
             tickvals: [8192, 16384, 32768, 65536, 131072, 262144, 524288],
             range: [Math.log10(6500), Math.log10(550000)],
@@ -298,10 +150,10 @@ function createOolongPlots(synthData, realData) {
         xaxis2: {
             title: 'Context Length',
             type: 'log',
-            domain: [0.5, 0.75],
-            ticktext: ['32K', '64K', '128K', '256K', '512K'],
-            tickvals: [32768, 65536, 131072, 262144, 524288],
-            range: [Math.log10(48000), Math.log10(600000)],
+            domain: [0.55, 1],
+            ticktext: ['64K', '128K', '256K', '512K', '916K'],
+            tickvals: [65536, 131072, 262144, 524288, 916174],
+            range: [Math.log10(48000), Math.log10(1000000)],
             gridcolor: 'lightgray',
             showgrid: true,
             gridwidth: 1
@@ -317,14 +169,16 @@ function createOolongPlots(synthData, realData) {
             gridwidth: 1
         },
         
-        // Legend on the right side
+        margin: { l: 50, r: 35, t: 65, b: 240 },
+
+        // Shared legend below the plots
         legend: {
-            orientation: 'v',
-            yanchor: 'middle',
-            y: 0.5,
+            orientation: 'h',
+            yanchor: 'top',
+            y: -0.25,
             xanchor: 'left',
-            x: 0.8,
-            font: { size: 10 },
+            x: 0,
+            font: { size: 11 },
             tracegroupgap: 0
         },
         
@@ -345,7 +199,7 @@ function createOolongPlots(synthData, realData) {
             },
             {
                 text: 'OOLONG-real',
-                x: 0.625,
+                x: 0.775,
                 y: 1.05,
                 xref: 'paper',
                 yref: 'paper',
@@ -364,11 +218,5 @@ function createOolongPlots(synthData, realData) {
     };
     
     // Create the plot
-    Plotly.newPlot('leaderboard-chart', traces, layout, config);
+    return Plotly.react('leaderboard-chart', traces, layout, config);
 }
-
-
-
-// Make functions available globally
-window.initializeLeaderboard = initializeLeaderboard;
-window.createLeaderboardTable = createLeaderboardTable;
